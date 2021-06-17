@@ -3,14 +3,14 @@
 /// Created Date: Wednesday, June 9th 2021, 10:05:14 am
 /// Author: Dennis Bilson <codelbas.quabynah@gmail.com>
 /// -----
-/// Last Modified: Thursday, June 10th 2021 12:17:52 pm
+/// Last Modified: Thursday, June 17th 2021 10:02:49 am
 /// Modified By: Dennis Bilson <codelbas.quabynah@gmail.com>
 /// -----
 /// Copyright (c) 2021 Quabynah Codelabs LLC
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mobile/features/onboarding/presentation/pages/welcome.dart';
+import 'package:mobile/features/shopping/presentation/pages/home.dart';
 import 'package:mobile/shared/ui.dart';
 
 class ECommerceApp extends StatelessWidget {
@@ -55,7 +55,8 @@ class ECommerceApp extends StatelessWidget {
           // shape: RoundedRectangleBorder(),
         ),
       ),
-      home: WelcomePage(),
+      home: HomePage(),
+      // home: WelcomePage(),
     );
   }
 }
