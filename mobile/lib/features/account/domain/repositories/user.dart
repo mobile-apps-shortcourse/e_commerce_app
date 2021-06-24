@@ -3,13 +3,13 @@
 /// Created Date: Tuesday, June 15th 2021, 12:04:11 pm
 /// Author: Dennis Bilson <codelbas.quabynah@gmail.com>
 /// -----
-/// Last Modified: Tuesday, June 15th 2021 12:25:34 pm
+/// Last Modified: Thursday, June 24th 2021 1:40:03 pm
 /// Modified By: Dennis Bilson <codelbas.quabynah@gmail.com>
 /// -----
 /// Copyright (c) 2021 Quabynah Codelabs LLC
 
 import 'package:mobile/features/account/domain/entities/finance.dart';
-import 'package:mobile/features/account/domain/entities/product.dart';
+import 'package:mobile/features/shopping/domain/entities/product.dart';
 import 'package:mobile/features/account/domain/entities/user.dart';
 
 /// defines all transactions on the [BaseUser] entity

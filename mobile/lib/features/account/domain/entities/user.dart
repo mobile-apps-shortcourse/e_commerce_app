@@ -3,12 +3,12 @@
 /// Created Date: Tuesday, June 15th 2021, 11:17:01 am
 /// Author: Dennis Bilson <codelbas.quabynah@gmail.com>
 /// -----
-/// Last Modified: Tuesday, June 15th 2021 12:19:47 pm
+/// Last Modified: Thursday, June 24th 2021 1:40:03 pm
 /// Modified By: Dennis Bilson <codelbas.quabynah@gmail.com>
 /// -----
 /// Copyright (c) 2021 Quabynah Codelabs LLC
 
-import 'product.dart';
+import '../../../shopping/domain/entities/product.dart';
 import 'address.dart';
 import 'finance.dart';
 

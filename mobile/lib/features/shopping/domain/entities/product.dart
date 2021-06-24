@@ -3,7 +3,7 @@
 /// Created Date: Tuesday, June 15th 2021, 11:17:16 am
 /// Author: Dennis Bilson <codelbas.quabynah@gmail.com>
 /// -----
-/// Last Modified: Tuesday, June 15th 2021 12:02:29 pm
+/// Last Modified: Thursday, June 24th 2021 1:48:00 pm
 /// Modified By: Dennis Bilson <codelbas.quabynah@gmail.com>
 /// -----
 /// Copyright (c) 2021 Quabynah Codelabs LLC
@@ -25,14 +25,17 @@ abstract class BaseProduct {
   late ProductCategory category;
   late double price;
   late String picture;
+  late String? model;
+  late String? color;
 
   BaseProduct copyWith({
-    String id,
-    String name,
+    String? name,
     String? description,
-    ProductCategory category,
-    double price,
-    String picture,
+    ProductCategory? category,
+    double? price,
+    String? picture,
+    String? model,
+    String? color,
   });
 }
 
@@ -54,11 +57,13 @@ abstract class BaseElectronicProduct extends BaseProduct {
 
   @override
   BaseElectronicProduct copyWith({
-    String id,
-    String name,
+    String? name,
     String? description,
-    ProductCategory category = ProductCategory.electronics,
-    double price,
-    String picture,
+    ProductCategory? category = ProductCategory.electronics,
+    double? price,
+    String? picture,
+    String? model,
+    String? color,
+    ElectronicType? electronicType,
   });
 }

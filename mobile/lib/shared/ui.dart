@@ -3,7 +3,7 @@
 /// Created Date: Thursday, June 10th 2021, 10:47:59 am
 /// Author: Dennis Bilson <codelbas.quabynah@gmail.com>
 /// -----
-/// Last Modified: Thursday, June 10th 2021 11:46:45 am
+/// Last Modified: Thursday, June 24th 2021 2:37:53 pm
 /// Modified By: Dennis Bilson <codelbas.quabynah@gmail.com>
 /// -----
 /// Copyright (c) 2021 Quabynah Codelabs LLC
@@ -70,7 +70,7 @@ TextTheme kDefaultTextTheme(BuildContext context) {
         fontSize: 14,
         fontWeight: FontWeight.w500,
         letterSpacing: 0.1),
-    bodyText1: _secondaryFont(
+    bodyText1: _primaryFont(
         color: kColorScheme.onBackground,
         fontSize: 16,
         fontWeight: FontWeight.w400,

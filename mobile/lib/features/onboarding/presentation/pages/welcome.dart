@@ -3,7 +3,7 @@
 /// Created Date: Thursday, June 10th 2021, 11:16:29 am
 /// Author: Dennis Bilson <codelbas.quabynah@gmail.com>
 /// -----
-/// Last Modified: Thursday, June 10th 2021 12:23:17 pm
+/// Last Modified: Thursday, June 24th 2021 1:11:05 pm
 /// Modified By: Dennis Bilson <codelbas.quabynah@gmail.com>
 /// -----
 /// Copyright (c) 2021 Quabynah Codelabs LLC
@@ -11,6 +11,8 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/features/onboarding/presentation/widgets/page.indicator.dart';
 import 'package:mobile/shared/constants.dart';
+import 'package:mobile/features/routes/route.gr.dart';
+import 'package:auto_route/auto_route.dart';
 
 /// initial route for all users
 class WelcomePage extends StatefulWidget {
@@ -92,6 +94,19 @@ class _WelcomePageState extends State<WelcomePage> {
                         FloatingActionButton(
                           onPressed: () {
                             // TODO : add action to navigate to authentication page
+                            // Navigator.of(context).push(
+                            //   MaterialPageRoute(
+                            //       builder: (context) => HomePage()),
+                            // );
+                            // navigate to a certain page and remove all other pages in the route stack
+                            context.router.pushAndPopUntil(HomeRoute(),
+                                predicate: (route) => false);
+
+                            // remove current route and navigate to new page
+                            // context.router.popAndPush(HomeRoute());
+
+                            // navigate to the next route and back
+                            // context.router.navigate(HomeRoute());
                           },
                           child: Icon(Icons.chevron_right),
                         ),
