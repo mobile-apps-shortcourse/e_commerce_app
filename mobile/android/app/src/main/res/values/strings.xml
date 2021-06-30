@@ -1,0 +1,14 @@
+<!--
+Filename: c:\Users\quaby\Documents\GitHub\e_commerce_app\mobile\android\app\src\main\res\values\strings.xml
+Path: c:\Users\quaby
+Created Date: Wednesday, June 30th 2021, 9:41:36 pm
+Author: Dennis Bilson
+
+Copyright (c) 2021 Quabynah Codelabs LLC
+-->
+
+<resources>
+    <string name="app_name">Shopper</string>
+    <string name="facebook_app_id">{your-app-id}</string>
+    <string name="fb_login_protocol_scheme">fb{your-app-id}</string>
+</resources>

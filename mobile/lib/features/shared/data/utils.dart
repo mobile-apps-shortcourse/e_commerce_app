@@ -3,7 +3,7 @@
 /// Created Date: Tuesday, June 29th 2021, 4:34:00 pm
 /// Author: Dennis Bilson <codelbas.quabynah@gmail.com>
 /// -----
-/// Last Modified: Tuesday, June 29th 2021 4:38:23 pm
+/// Last Modified: Wednesday, June 30th 2021 9:30:33 pm
 /// Modified By: Dennis Bilson <codelbas.quabynah@gmail.com>
 /// -----
 /// Copyright (c) 2021 Quabynah Codelabs LLC
@@ -19,5 +19,5 @@ class NetworkInfo extends BaseNetworkInfo {
   NetworkInfo({required this.checker});
 
   @override
-  Future<bool> get connected => checker.hasConnection;
+  Future<bool> get connected async => await checker.hasConnection;
 }
