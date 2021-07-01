@@ -1,14 +1,13 @@
-/// File: utils.dart
+/// File: network.dart
 /// Project: mobile
-/// Created Date: Tuesday, June 29th 2021, 4:33:41 pm
+/// Created Date: Thursday, July 1st 2021, 10:50:32 am
 /// Author: Dennis Bilson <codelbas.quabynah@gmail.com>
 /// -----
-/// Last Modified: Tuesday, June 29th 2021 4:37:53 pm
+/// Last Modified: Thursday, July 1st 2021 10:50:46 am
 /// Modified By: Dennis Bilson <codelbas.quabynah@gmail.com>
 /// -----
 /// Copyright (c) 2021 Quabynah Codelabs LLC
 
-// device network information
 abstract class BaseNetworkInfo {
   // shows whether device is connected to the internet or not
   Future<bool> get connected;

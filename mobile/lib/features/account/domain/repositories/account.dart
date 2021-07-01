@@ -3,7 +3,7 @@
 /// Created Date: Tuesday, June 15th 2021, 12:03:52 pm
 /// Author: Dennis Bilson <codelbas.quabynah@gmail.com>
 /// -----
-/// Last Modified: Tuesday, June 29th 2021 4:29:23 pm
+/// Last Modified: Thursday, July 1st 2021 10:44:32 am
 /// Modified By: Dennis Bilson <codelbas.quabynah@gmail.com>
 /// -----
 /// Copyright (c) 2021 Quabynah Codelabs LLC
@@ -20,7 +20,10 @@ abstract class BaseAccountRepository {
     required String password,
   });
 
-  Future<BaseAccount?> loginWithOAuth({required OAuthType type});
+  Future<BaseAccount?> loginWithOAuth({
+    required OAuthType type,
+    required AccountType accountType,
+  });
 
   Future<BaseAccount?> createAccount({
     required String username,

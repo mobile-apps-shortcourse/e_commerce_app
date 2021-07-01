@@ -3,16 +3,26 @@
 /// Created Date: Thursday, June 10th 2021, 11:16:29 am
 /// Author: Dennis Bilson <codelbas.quabynah@gmail.com>
 /// -----
-/// Last Modified: Thursday, June 24th 2021 1:11:05 pm
+/// Last Modified: Thursday, July 1st 2021 11:20:56 am
 /// Modified By: Dennis Bilson <codelbas.quabynah@gmail.com>
 /// -----
 /// Copyright (c) 2021 Quabynah Codelabs LLC
 
 import 'package:flutter/material.dart';
+import 'package:flutter_login_facebook/flutter_login_facebook.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:mobile/features/account/data/repositories/account.dart';
+import 'package:mobile/features/account/domain/entities/account.dart';
+import 'package:mobile/features/account/domain/repositories/account.dart';
 import 'package:mobile/features/onboarding/presentation/widgets/page.indicator.dart';
+import 'package:mobile/features/shared/data/local.storage.dart';
+import 'package:mobile/features/shared/data/network.dart';
 import 'package:mobile/shared/constants.dart';
 import 'package:mobile/features/routes/route.gr.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:twitter_login/twitter_login.dart';
 
 /// initial route for all users
 class WelcomePage extends StatefulWidget {
@@ -92,15 +102,39 @@ class _WelcomePageState extends State<WelcomePage> {
 
                         // round button
                         FloatingActionButton(
-                          onPressed: () {
+                          onPressed: () async {
                             // TODO : add action to navigate to authentication page
+                            var accountRepo = AccountRepository(
+                              networkInfo: NetworkInfo(
+                                  checker: InternetConnectionChecker()),
+                              googleSignIn: GoogleSignIn(
+                                scopes: [
+                                  'email',
+                                  'https://www.googleapis.com/auth/contacts.readonly',
+                                ],
+                              ),
+                              facebookLogin: FacebookLogin(),
+                              twitterLogin: TwitterLogin(
+                                apiKey: 'apiKey',
+                                apiSecretKey: 'apiSecretKey',
+                                redirectURI: 'redirectURI',
+                              ),
+                              localStorage: LocalStorage(
+                                  prefs: await SharedPreferences.getInstance()),
+                            );
+
+                            var account = await accountRepo.loginWithOAuth(
+                                type: OAuthType.google,
+                                accountType: AccountType.customer);
+
+                            print(account);
+
                             // Navigator.of(context).push(
                             //   MaterialPageRoute(
                             //       builder: (context) => HomePage()),
                             // );
                             // navigate to a certain page and remove all other pages in the route stack
-                            context.router.pushAndPopUntil(HomeRoute(),
-                                predicate: (route) => false);
+                            // context.router.pushAndPopUntil(HomeRoute(), predicate: (route) => false);
 
                             // remove current route and navigate to new page
                             // context.router.popAndPush(HomeRoute());

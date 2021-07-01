@@ -3,14 +3,16 @@
 /// Created Date: Tuesday, June 29th 2021, 4:29:56 pm
 /// Author: Dennis Bilson <codelbas.quabynah@gmail.com>
 /// -----
-/// Last Modified: Tuesday, June 29th 2021 4:52:18 pm
+/// Last Modified: Thursday, July 1st 2021 11:22:12 am
 /// Modified By: Dennis Bilson <codelbas.quabynah@gmail.com>
 /// -----
 /// Copyright (c) 2021 Quabynah Codelabs LLC
 
+import 'package:mobile/features/account/data/models/account/account.dart';
 import 'package:mobile/features/account/domain/entities/account.dart';
 import 'package:mobile/features/account/domain/repositories/account.dart';
-import 'package:mobile/features/shared/domain/utils.dart';
+import 'package:mobile/features/shared/domain/local.storage.dart';
+import 'package:mobile/features/shared/domain/network.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_login_facebook/flutter_login_facebook.dart';
 import 'package:twitter_login/twitter_login.dart';
@@ -21,12 +23,14 @@ class AccountRepository extends BaseAccountRepository {
   final GoogleSignIn googleSignIn;
   final FacebookLogin facebookLogin;
   final TwitterLogin twitterLogin;
+  final BaseLocalStorage localStorage;
 
   AccountRepository({
     required this.networkInfo,
     required this.googleSignIn,
     required this.facebookLogin,
     required this.twitterLogin,
+    required this.localStorage,
   });
 
   @override
@@ -54,9 +58,21 @@ class AccountRepository extends BaseAccountRepository {
   }
 
   @override
-  Future<BaseAccount?> loginWithOAuth({required OAuthType type}) async {
-    // TODO: implement loginWithOAuth
-    throw UnimplementedError();
+  Future<BaseAccount?> loginWithOAuth(
+      {required OAuthType type, required AccountType accountType}) async {
+    switch (type) {
+      case OAuthType.facebook:
+        // handle facebook login
+        return _handleFacebookAuth(type: accountType);
+
+      case OAuthType.google:
+        // handle google login
+        return _handleGoogleAuth(type: accountType);
+
+      case OAuthType.twitter:
+        // handle twitter login
+        return _handleTwitterAuth(type: accountType);
+    }
   }
 
   @override
@@ -64,4 +80,38 @@ class AccountRepository extends BaseAccountRepository {
     // TODO: implement resetPassword
     throw UnimplementedError();
   }
+
+  // sign in with google
+  Future<BaseAccount?> _handleGoogleAuth({required AccountType type}) async {
+    try {
+      var googleAccount = await googleSignIn.signIn();
+      if (googleAccount != null) {
+        var displayName = googleAccount.displayName;
+        var id = googleAccount.id;
+        var email = googleAccount.email;
+        var avatar = googleAccount.photoUrl;
+
+        // create user account
+        var account = Account(userId: id, type: type);
+
+        // save user account details
+        localStorage.saveAccount = account;
+
+        // todo -> save user data to database
+
+        return account;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print(e);
+      return null;
+    }
+  }
+
+  // sign in with facebook
+  Future<BaseAccount?> _handleFacebookAuth({required AccountType type}) async {}
+
+  // sign in with twitter
+  Future<BaseAccount?> _handleTwitterAuth({required AccountType type}) async {}
 }
