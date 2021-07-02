@@ -11,7 +11,7 @@
 import 'package:mobile/features/account/domain/entities/account.dart';
 
 // type of oauth
-enum OAuthType { google, facebook, twitter }
+enum OAuthType { google, facebook, twitter, apple }
 
 /// defines all transactions on the [BaseAccount] entity
 abstract class BaseAccountRepository {

@@ -9,16 +9,19 @@
 /// Copyright (c) 2021 Quabynah Codelabs LLC
 
 import 'package:auto_route/annotations.dart';
+import 'package:mobile/features/account/presentation/pages/auth.dart';
 import 'package:mobile/features/onboarding/presentation/pages/welcome.dart';
 import 'package:mobile/features/shopping/presentation/pages/home.dart';
 import 'package:mobile/features/shopping/presentation/pages/product.dart';
 
+/// flutter packages pub run build_runner watch --delete-conflicting-outputs
 @MaterialAutoRouter(
   replaceInRouteName: 'Page,Route',
   routes: [
     AutoRoute(page: WelcomePage, initial: true),
     AutoRoute(page: HomePage),
     AutoRoute(page: ProductPage),
+    AutoRoute(page: AuthenticationPage),
   ],
 )
 class $AppRouter {}
