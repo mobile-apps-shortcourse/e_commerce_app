@@ -7,15 +7,14 @@
 /// Modified By: Dennis Bilson <codelbas.quabynah@gmail.com>
 /// -----
 /// Copyright (c) 2021 Quabynah Codelabs LLC
-
+import 'package:flutter_login_facebook/flutter_login_facebook.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:mobile/features/account/data/models/account/account.dart';
 import 'package:mobile/features/account/domain/entities/account.dart';
 import 'package:mobile/features/account/domain/repositories/account.dart';
 import 'package:mobile/features/shared/domain/local.storage.dart';
 import 'package:mobile/features/shared/domain/network.dart';
 import 'package:mobile/shared/logger.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:flutter_login_facebook/flutter_login_facebook.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:twitter_login/twitter_login.dart';
 
@@ -118,81 +117,43 @@ class AccountRepository extends BaseAccountRepository {
   // sign in with facebook
   Future<BaseAccount?> _handleFacebookAuth({required AccountType type}) async {
     print('facebook');
-    // Log in
-    final res = await facebookLogin.logIn(
-      permissions: [
-        FacebookPermission.publicProfile,
-        FacebookPermission.email,
-      ],
-    );
+    try {
+      // Log in
+      final res = await facebookLogin.logIn(
+        permissions: [
+          FacebookPermission.publicProfile,
+          FacebookPermission.email,
+        ],
+      );
 
-    // Check result status
-    switch (res.status) {
-      case FacebookLoginStatus.success:
+      // Check result status
+      switch (res.status) {
+        case FacebookLoginStatus.success:
+          // Send access token to server for validation and auth
+          final FacebookAccessToken? accessToken = res.accessToken;
+          print('Access token: ${accessToken?.token}');
 
-        // Send access token to server for validation and auth
-        final FacebookAccessToken? accessToken = res.accessToken;
-        print('Access token: ${accessToken?.token}');
-
-        // Get profile data
-        final profile = await facebookLogin.getUserProfile();
-        if (profile == null) {
-          print('user could not be found for facebook auth');
-          return null;
-        } else {
-          var displayName = profile.name;
-
-          print('Hello, $displayName! Your ID: ${profile.userId}');
-
-          // Get user profile image url
-          final avatar = await facebookLogin.getProfileImageUrl(width: 100);
-          print('Your profile image: $avatar');
-
-          // Get email (since we request email permission)
-          final email = await facebookLogin.getUserEmail();
-          // But user can decline permission
-          if (email != null) print('And your email is $email');
-
-          // create user account
-          var account = Account(userId: profile.userId, type: type);
-
-          // save user account details
-          localStorage.saveAccount = account;
-
-          // todo -> save user data to database
-
-          return account;
-        }
-      case FacebookLoginStatus.cancel:
-        // User cancel log in
-        return null;
-      case FacebookLoginStatus.error:
-        // Log in failed
-        print('Error while log in: ${res.error}');
-        return null;
-    }
-  }
-
-  // sign in with twitter
-  Future<BaseAccount?> _handleTwitterAuth({required AccountType type}) async {
-    print('twitter');
-    final authResult = await twitterLogin.login();
-    if (authResult.status != null) {
-      switch (authResult.status!) {
-        case TwitterLoginStatus.loggedIn:
-          // success
-          var user = authResult.user;
-          if (user == null) {
-            print('user not found for twitter auth');
+          // Get profile data
+          final profile = await facebookLogin.getUserProfile();
+          if (profile == null) {
+            print('user could not be found for facebook auth');
             return null;
           } else {
-            var displayName = user.name;
-            var email = user.email;
-            var avatar = user.thumbnailImage;
-            var id = user.id.toString();
+            var displayName = profile.name;
+
+            print('Hello, $displayName! Your ID: ${profile.userId}');
+
+            // Get user profile image url
+            final avatar = await facebookLogin.getProfileImageUrl(width: 100);
+            print('Your profile image: $avatar');
+
+            // Get email (since we request email permission)
+            final email = await facebookLogin.getUserEmail();
+            // But user can decline permission
+            if (email != null) print('And your email is $email');
 
             // create user account
-            var account = Account(userId: id, type: type);
+            var account = Account(userId: profile.userId, type: type);
 
             // save user account details
             localStorage.saveAccount = account;
@@ -201,35 +162,87 @@ class AccountRepository extends BaseAccountRepository {
 
             return account;
           }
-        case TwitterLoginStatus.cancelledByUser:
-          // cancel
+        case FacebookLoginStatus.cancel:
+          // User cancel log in
           return null;
-        case TwitterLoginStatus.error:
-          // error
+        case FacebookLoginStatus.error:
+          // Log in failed
+          print('Error while log in: ${res.error}');
           return null;
       }
-    } else {
+    } catch (e) {
+      logger.e(e);
+      return null;
+    }
+  }
+
+  // sign in with twitter
+  Future<BaseAccount?> _handleTwitterAuth({required AccountType type}) async {
+    print('twitter');
+    try {
+      final authResult = await twitterLogin.login();
+      if (authResult.status != null) {
+        switch (authResult.status!) {
+          case TwitterLoginStatus.loggedIn:
+            // success
+            var user = authResult.user;
+            if (user == null) {
+              print('user not found for twitter auth');
+              return null;
+            } else {
+              var displayName = user.name;
+              var email = user.email;
+              var avatar = user.thumbnailImage;
+              var id = user.id.toString();
+
+              // create user account
+              var account = Account(userId: id, type: type);
+
+              // save user account details
+              localStorage.saveAccount = account;
+
+              // todo -> save user data to database
+
+              return account;
+            }
+          case TwitterLoginStatus.cancelledByUser:
+            // cancel
+            return null;
+          case TwitterLoginStatus.error:
+            // error
+            return null;
+        }
+      } else {
+        return null;
+      }
+    } catch (e) {
+      logger.e(e);
       return null;
     }
   }
 
   // sign in with apple
   Future<BaseAccount?> _handleAppleAuth({required AccountType type}) async {
-    var credential = await SignInWithApple.getAppleIDCredential(
-      scopes: [
-        AppleIDAuthorizationScopes.email,
-        AppleIDAuthorizationScopes.fullName,
-      ],
-      webAuthenticationOptions: WebAuthenticationOptions(
-        clientId: 'clientId', // todo -> add apple client id
-        redirectUri: Uri(
-          host: 'shopper-ecommerce.firebaseapp.com',
-          path: '/__/auth/handler',
-          scheme: 'https',
-        ),
-      ),
-    );
-    logger.i(credential);
-    return null;
+    try {
+      var credential = await SignInWithApple.getAppleIDCredential(
+            scopes: [
+              AppleIDAuthorizationScopes.email,
+              AppleIDAuthorizationScopes.fullName,
+            ],
+            webAuthenticationOptions: WebAuthenticationOptions(
+              clientId: 'clientId', // todo -> add apple client id
+              redirectUri: Uri(
+                host: 'shopper-ecommerce.firebaseapp.com',
+                path: '/__/auth/handler',
+                scheme: 'https',
+              ),
+            ),
+          );
+      logger.i(credential);
+      return null;
+    } catch (e) {
+      logger.e(e);
+      return null;
+    }
   }
 }

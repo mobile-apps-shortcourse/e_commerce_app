@@ -95,7 +95,7 @@ class Injector {
   }
 
   // returns an instance of the dependency if any
-  T get<T>() {
+  static T get<T>() {
     for (var dep in _deps) {
       if (dep is T) return dep;
     }

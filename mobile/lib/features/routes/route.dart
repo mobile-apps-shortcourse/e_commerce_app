@@ -9,7 +9,9 @@
 /// Copyright (c) 2021 Quabynah Codelabs LLC
 
 import 'package:auto_route/annotations.dart';
-import 'package:mobile/features/account/presentation/pages/auth.dart';
+import 'package:mobile/features/account/presentation/pages/login.dart';
+import 'package:mobile/features/account/presentation/pages/phone_number.verification.dart';
+import 'package:mobile/features/account/presentation/pages/register.dart';
 import 'package:mobile/features/onboarding/presentation/pages/welcome.dart';
 import 'package:mobile/features/shopping/presentation/pages/home.dart';
 import 'package:mobile/features/shopping/presentation/pages/product.dart';
@@ -22,6 +24,8 @@ import 'package:mobile/features/shopping/presentation/pages/product.dart';
     AutoRoute(page: HomePage),
     AutoRoute(page: ProductPage),
     AutoRoute(page: AuthenticationPage),
+    AutoRoute(page: RegisterPage),
+    AutoRoute(page: PhoneNumberVerificationPage),
   ],
 )
 class $AppRouter {}

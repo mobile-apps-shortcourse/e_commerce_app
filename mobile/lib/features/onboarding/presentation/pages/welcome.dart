@@ -5,8 +5,6 @@
 /// -----
 /// Last Modified: Thursday, July 1st 2021 11:20:56 am
 /// Modified By: Dennis Bilson <codelbas.quabynah@gmail.com>
-/// -----
-/// Copyright (c) 2021 Quabynah Codelabs LLC
 
 import 'package:flutter/material.dart';
 import 'package:mobile/features/onboarding/presentation/widgets/page.indicator.dart';
