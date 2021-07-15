@@ -12,6 +12,8 @@ class AuthBloc extends Bloc<AuthEvent, BlocState> {
 
   AuthBloc({required this.repository}) : super(BlocState.initialState());
 
+  bool get isLoggedIn => repository.isLoggedIn;
+
   @override
   Stream<BlocState> mapEventToState(
     AuthEvent event,
@@ -22,8 +24,7 @@ class AuthBloc extends Bloc<AuthEvent, BlocState> {
       // await Future.delayed(Duration(seconds: 2));
 
       // login with google
-      var account = await repository.loginWithOAuth(
-          type: OAuthType.google, accountType: event.accountType);
+      var account = await repository.loginWithOAuth(type: OAuthType.google);
       if (account == null) {
         yield BlocState.errorState(failure: 'Account was not found');
       } else {
@@ -44,8 +45,7 @@ class AuthBloc extends Bloc<AuthEvent, BlocState> {
       yield BlocState.loadingState();
 
       // login with facebook
-      var account = await repository.loginWithOAuth(
-          type: OAuthType.facebook, accountType: event.accountType);
+      var account = await repository.loginWithOAuth(type: OAuthType.facebook);
 
       if (account == null) {
         yield BlocState.errorState(failure: 'Account was not found');
@@ -56,8 +56,7 @@ class AuthBloc extends Bloc<AuthEvent, BlocState> {
       yield BlocState.loadingState();
 
       // login with twitter
-      var account = await repository.loginWithOAuth(
-          type: OAuthType.twitter, accountType: event.accountType);
+      var account = await repository.loginWithOAuth(type: OAuthType.twitter);
       if (account == null) {
         yield BlocState.errorState(failure: 'Account was not found');
       } else {
@@ -67,8 +66,7 @@ class AuthBloc extends Bloc<AuthEvent, BlocState> {
       yield BlocState.loadingState();
 
       // login with apple
-      var account = await repository.loginWithOAuth(
-          type: OAuthType.apple, accountType: event.accountType);
+      var account = await repository.loginWithOAuth(type: OAuthType.apple);
 
       if (account == null) {
         yield BlocState.errorState(failure: 'Account was not found');

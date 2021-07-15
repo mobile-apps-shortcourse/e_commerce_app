@@ -3,13 +3,12 @@
 /// Created Date: Thursday, June 24th 2021, 1:49:56 pm
 /// Author: Dennis Bilson <codelbas.quabynah@gmail.com>
 /// -----
-/// Last Modified: Thursday, June 24th 2021 2:49:56 pm
-/// Modified By: Dennis Bilson <codelbas.quabynah@gmail.com>
+/// Last Modified: Th/07/yyyy 10:nn:25
+/// Modified By: Short Course May-July, 2021
 /// -----
 /// Copyright (c) 2021 Quabynah Codelabs LLC
 
-import 'package:mobile/features/shopping/data/models/product.dart';
-import 'package:mobile/features/shopping/domain/entities/product.dart';
+part of 'shared.dart';
 
 // a list of sample products
 final sampleProducts = <BaseProduct>[

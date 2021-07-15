@@ -1,12 +1,16 @@
+/// Filename: c:\Users\quaby\Documents\GitHub\e_commerce_app\mobile\lib\features\account\presentation\pages\login.dart
+/// Path: c:\Users\quaby\Documents\GitHub\e_commerce_app\mobile
+/// Created Date: Thursday, July 8th 2021, 11:50:07 am
+/// Author: Short Course May-July, 2021
+///
+/// Copyright (c) 2021 University of Ghana
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mobile/features/account/domain/entities/account.dart';
 import 'package:mobile/features/account/presentation/bloc/auth_bloc.dart';
 import 'package:mobile/features/shared/presentation/bloc/shared_bloc_state.dart';
-import 'package:mobile/shared/constants.dart';
-import 'package:mobile/shared/injector.dart';
-import 'package:mobile/shared/logger.dart';
+import 'package:mobile/shared/shared.dart';
 
 /// sign in existing users
 class AuthenticationPage extends StatefulWidget {
@@ -47,14 +51,14 @@ class AuthenticationPageState extends State<AuthenticationPage> {
         _error = state is ErrorState;
         if (mounted) setState(() {});
 
-        if (state is SuccessState<BaseAccount>) {
+        if (state is SuccessState<BaseAccount> && mounted) {
           logger.i('account is -> ${state.data}');
+          context.showSnackBar(message: 'Signed in successfully');
+          context.router.pushAndPopUntil(HomeRoute(), predicate: (_) => false);
         }
 
         if (state is ErrorState) {
-          ScaffoldMessenger.of(context)
-              ..removeCurrentSnackBar()
-              ..showSnackBar(SnackBar(content: Text(state.failure.toString())));
+          context.showSnackBar(message: state.failure.toString());
         }
       },
       child: Scaffold(
@@ -121,7 +125,7 @@ class AuthenticationPageState extends State<AuthenticationPage> {
                             label: "Login with Google",
                             icon: FontAwesomeIcons.google,
                             onPressed: () => _accountBloc.add(
-                                LoginWithGoogleEvent(AccountType.customer)),
+                                LoginWithGoogleEvent()),
                           ),
 
                           // twitter button
@@ -131,7 +135,7 @@ class AuthenticationPageState extends State<AuthenticationPage> {
                             label: "Login with Twitter",
                             icon: FontAwesomeIcons.twitter,
                             onPressed: () => _accountBloc.add(
-                                LoginWithTwitterEvent(AccountType.customer)),
+                                LoginWithTwitterEvent()),
                           ),
 
                           // facebook button
@@ -141,7 +145,7 @@ class AuthenticationPageState extends State<AuthenticationPage> {
                             label: "Login with Facebook",
                             icon: FontAwesomeIcons.facebook,
                             onPressed: () => _accountBloc.add(
-                                LoginWithFacebookEvent(AccountType.customer)),
+                                LoginWithFacebookEvent()),
                           ),
 
                           // apple button
@@ -151,7 +155,7 @@ class AuthenticationPageState extends State<AuthenticationPage> {
                             label: "Login with Apple",
                             icon: FontAwesomeIcons.apple,
                             onPressed: () => _accountBloc
-                                .add(LoginWithAppleEvent(AccountType.customer)),
+                                .add(LoginWithAppleEvent()),
                           ),
                         ],
                       ),

@@ -1,21 +1,11 @@
-import 'package:flutter_login_facebook/flutter_login_facebook.dart';
-import 'package:mobile/features/shared/domain/local.storage.dart';
-import 'package:mobile/features/shared/domain/network.dart';
-import 'package:riverpod/riverpod.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:internet_connection_checker/internet_connection_checker.dart';
-import 'package:mobile/features/account/data/repositories/account.dart';
-import 'package:mobile/features/account/domain/entities/account.dart';
-import 'package:mobile/features/account/domain/repositories/account.dart';
-import 'package:mobile/features/shared/data/local.storage.dart';
-import 'package:mobile/features/shared/data/network.dart';
-import 'package:mobile/shared/constants.dart';
-import 'package:auto_route/auto_route.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sign_in_with_apple/sign_in_with_apple.dart';
-import 'package:twitter_login/twitter_login.dart';
+/// Filename: c:\Users\quaby\Documents\GitHub\e_commerce_app\mobile\lib\shared\injector.dart
+/// Path: c:\Users\quaby\Documents\GitHub\e_commerce_app\mobile
+/// Created Date: Thursday, July 8th 2021, 11:50:07 am
+/// Author: Short Course May-July, 2021
+///
+/// Copyright (c) 2021 University of Ghana
 
-import 'logger.dart';
+part of 'shared.dart';
 
 /// region dependencies
 // shared preferences
@@ -32,23 +22,37 @@ final _networkInfoProvider =
         (_, checker) => NetworkInfo(checker: checker));
 
 // google sign in
-final _googleSignInProvider = Provider<GoogleSignIn>((_) => GoogleSignIn());
+final _googleSignInProvider = Provider<GoogleSignIn>((_) => GoogleSignIn(
+      clientId: /*SystemConfig.getOrNull('google_client_id')*/ '818759490761-664dd80asvvnp5ubc0h225930dua979d.apps.googleusercontent.com',
+    ));
 
 // facebook sign in
-final _facebookProvider = Provider<FacebookLogin>((_) => FacebookLogin());
+final _facebookProvider = Provider<FacebookAuth>((_) => FacebookAuth.instance);
 
 // twitter sign in
 final _twitterProvider = Provider<TwitterLogin>(
   (_) => TwitterLogin(
-    apiKey: 'zCeNFjWom3JgsKIuHFyhjoTrY',
-    apiSecretKey: 'Y3H9m9igrpztweA5BrjGRKTcbJS2vVXvUMy6N6KEMQvfbgu2eK',
-    redirectURI: 'https://shopper-ecommerce.firebaseapp.com/__/auth/handler',
+    apiKey: /*SystemConfig.getOrNull('twitter_api_key')!*/ 'zCeNFjWom3JgsKIuHFyhjoTrY',
+    apiSecretKey: /*SystemConfig.getOrNull('twitter_api_secret')!*/ 'Y3H9m9igrpztweA5BrjGRKTcbJS2vVXvUMy6N6KEMQvfbgu2eK',
+    redirectURI: /*SystemConfig.getOrNull('firebase_auth_redirect_uri')!*/ 'https://shopper-ecommerce.firebaseapp.com/__/auth/handler',
   ),
 );
 
 // apple sign in
-final _appleLoginProvider =
-    FutureProvider<SignInWithApple>((_) async => await SignInWithApple());
+final _appleLoginProvider = Provider<SignInWithApple>((_) => SignInWithApple());
+
+// firebase authentication
+final _firebaseAuthProvider =
+    Provider<FirebaseAuth>((_) => FirebaseAuth.instance);
+
+// firebase cloud storage
+// Shopper Mall -> shopper_mall
+final _firebaseStorageProvider = Provider<Reference>((_) =>
+    FirebaseStorage.instance.ref(kAppName.toLowerCase().replaceAll(' ', '_')));
+
+// firebase cloud firestore
+final _firebaseFirestoreProvider =
+    Provider<FirebaseFirestore>((_) => FirebaseFirestore.instance);
 
 // local storage
 final _localStorageProvider =
@@ -66,7 +70,8 @@ class Injector {
   static Future<void> init() async {
     var provider = ProviderContainer();
 
-    SharedPreferences.setMockInitialValues({});
+    // initialize firebase
+    await Firebase.initializeApp();
 
     // dependencies
     var prefs = await provider.read(_sharedPreferencesProvider.future);
@@ -74,9 +79,14 @@ class Injector {
     var networkInfo = provider.read(_networkInfoProvider(checker));
     var googleSignIn = provider.read(_googleSignInProvider);
     var facebookLogin = provider.read(_facebookProvider);
+    var firebaseAuth = provider.read(_firebaseAuthProvider);
+    var firebaseStorage = provider.read(_firebaseStorageProvider);
+    var firebaseFirestore = provider.read(_firebaseFirestoreProvider);
     var twitterLogin = provider.read(_twitterProvider);
-    var signInWithApple = await provider.read(_appleLoginProvider.future);
+    var signInWithApple = provider.read(_appleLoginProvider);
     var localStorage = provider.read(_localStorageProvider(prefs));
+
+    logger.i(localStorage.userAccount);
 
     // repositories
     BaseAccountRepository accountRepo = AccountRepository(
@@ -86,6 +96,7 @@ class Injector {
       twitterLogin: twitterLogin,
       signInWithApple: signInWithApple,
       localStorage: localStorage,
+      auth: firebaseAuth,
     );
 
     // add dependencies

@@ -3,15 +3,14 @@
 /// Created Date: Wednesday, June 9th 2021, 10:05:14 am
 /// Author: Dennis Bilson <codelbas.quabynah@gmail.com>
 /// -----
-/// Last Modified: Thursday, June 24th 2021 1:26:39 pm
-/// Modified By: Dennis Bilson <codelbas.quabynah@gmail.com>
+/// Last Modified: Th/07/yyyy 10:nn:24
+/// Modified By: Short Course May-July, 2021
 /// -----
 /// Copyright (c) 2021 Quabynah Codelabs LLC
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mobile/features/routes/route.gr.dart';
-import 'package:mobile/shared/ui.dart';
+import 'package:mobile/shared/shared.dart';
 
 class ECommerceApp extends StatelessWidget {
   ECommerceApp({Key? key}) : super(key: key);

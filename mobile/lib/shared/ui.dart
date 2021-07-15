@@ -3,13 +3,12 @@
 /// Created Date: Thursday, June 10th 2021, 10:47:59 am
 /// Author: Dennis Bilson <codelbas.quabynah@gmail.com>
 /// -----
-/// Last Modified: Thursday, June 24th 2021 2:37:53 pm
-/// Modified By: Dennis Bilson <codelbas.quabynah@gmail.com>
+/// Last Modified: Th/07/yyyy 10:nn:45
+/// Modified By: Short Course May-July, 2021
 /// -----
 /// Copyright (c) 2021 Quabynah Codelabs LLC
 
-import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+part of 'shared.dart';
 
 // color scheme
 final kPrimaryColor = Color(0xff000000);

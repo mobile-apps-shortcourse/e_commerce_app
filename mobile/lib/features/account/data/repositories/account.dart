@@ -3,18 +3,19 @@
 /// Created Date: Tuesday, June 29th 2021, 4:29:56 pm
 /// Author: Dennis Bilson <codelbas.quabynah@gmail.com>
 /// -----
-/// Last Modified: Thursday, July 1st 2021 11:22:12 am
-/// Modified By: Dennis Bilson <codelbas.quabynah@gmail.com>
+/// Last Modified: Th/07/yyyy 10:nn:18
+/// Modified By: Short Course May-July, 2021
 /// -----
 /// Copyright (c) 2021 Quabynah Codelabs LLC
-import 'package:flutter_login_facebook/flutter_login_facebook.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:mobile/features/account/data/models/account/account.dart';
 import 'package:mobile/features/account/domain/entities/account.dart';
 import 'package:mobile/features/account/domain/repositories/account.dart';
 import 'package:mobile/features/shared/domain/local.storage.dart';
 import 'package:mobile/features/shared/domain/network.dart';
-import 'package:mobile/shared/logger.dart';
+import 'package:mobile/shared/shared.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:twitter_login/twitter_login.dart';
 
@@ -22,10 +23,11 @@ import 'package:twitter_login/twitter_login.dart';
 class AccountRepository extends BaseAccountRepository {
   final BaseNetworkInfo networkInfo;
   final GoogleSignIn googleSignIn;
-  final FacebookLogin facebookLogin;
+  final FacebookAuth facebookLogin;
   final TwitterLogin twitterLogin;
   final SignInWithApple signInWithApple;
   final BaseLocalStorage localStorage;
+  final FirebaseAuth auth;
 
   AccountRepository({
     required this.networkInfo,
@@ -34,6 +36,7 @@ class AccountRepository extends BaseAccountRepository {
     required this.twitterLogin,
     required this.signInWithApple,
     required this.localStorage,
+    required this.auth,
   });
 
   @override
@@ -61,8 +64,13 @@ class AccountRepository extends BaseAccountRepository {
   }
 
   @override
-  Future<BaseAccount?> loginWithOAuth(
-      {required OAuthType type, required AccountType accountType}) async {
+  Future<BaseAccount?> loginWithOAuth({required OAuthType type}) async {
+    var accountType = localStorage.accountType;
+    if (accountType == null) {
+      logger.e('no account type selected');
+      return null;
+    }
+
     switch (type) {
       case OAuthType.facebook:
         // handle facebook login
@@ -96,15 +104,15 @@ class AccountRepository extends BaseAccountRepository {
         var email = googleAccount.email;
         var avatar = googleAccount.photoUrl;
 
-        // create user account
-        var account = Account(userId: id, type: type);
+        // get current authentication
+        var authentication = await googleAccount.authentication;
 
-        // save user account details
-        localStorage.saveAccount = account;
-
-        // todo -> save user data to database
-
-        return account;
+        return _signInWithFirebaseAuth(
+            GoogleAuthProvider.credential(
+              accessToken: authentication.accessToken,
+              idToken: authentication.idToken,
+            ),
+            type);
       } else {
         return null;
       }
@@ -116,59 +124,48 @@ class AccountRepository extends BaseAccountRepository {
 
   // sign in with facebook
   Future<BaseAccount?> _handleFacebookAuth({required AccountType type}) async {
-    print('facebook');
     try {
       // Log in
-      final res = await facebookLogin.logIn(
-        permissions: [
-          FacebookPermission.publicProfile,
-          FacebookPermission.email,
-        ],
-      );
+      final res = await facebookLogin.login();
 
       // Check result status
       switch (res.status) {
-        case FacebookLoginStatus.success:
+        case LoginStatus.success:
           // Send access token to server for validation and auth
-          final FacebookAccessToken? accessToken = res.accessToken;
-          print('Access token: ${accessToken?.token}');
+          final accessToken = res.accessToken;
+          if (accessToken != null) {
+            // Get profile data
+            final profile = await facebookLogin.getUserData();
+            var displayName = profile['name'];
 
-          // Get profile data
-          final profile = await facebookLogin.getUserProfile();
-          if (profile == null) {
-            print('user could not be found for facebook auth');
-            return null;
-          } else {
-            var displayName = profile.name;
-
-            print('Hello, $displayName! Your ID: ${profile.userId}');
+            logger.i('Hello, $displayName! Your ID: ${res.accessToken?.token}');
 
             // Get user profile image url
-            final avatar = await facebookLogin.getProfileImageUrl(width: 100);
-            print('Your profile image: $avatar');
+            final avatar = profile['picture'];
+            logger.i('Your profile image: $avatar');
 
             // Get email (since we request email permission)
-            final email = await facebookLogin.getUserEmail();
+            final email = profile['email'];
             // But user can decline permission
-            if (email != null) print('And your email is $email');
+            if (email != null) logger.i('And your email is $email');
 
-            // create user account
-            var account = Account(userId: profile.userId, type: type);
-
-            // save user account details
-            localStorage.saveAccount = account;
-
-            // todo -> save user data to database
-
-            return account;
+            return _signInWithFirebaseAuth(
+                FacebookAuthProvider.credential(accessToken.token), type);
+          } else {
+            logger.e('no access token found');
+            return null;
           }
-        case FacebookLoginStatus.cancel:
+
+        case LoginStatus.cancelled:
           // User cancel log in
           return null;
-        case FacebookLoginStatus.error:
+        case LoginStatus.failed:
           // Log in failed
-          print('Error while log in: ${res.error}');
+          logger.i('Error while log in: ${res.message}');
           return null;
+        case LoginStatus.operationInProgress:
+          // User cancel log in
+          break;
       }
     } catch (e) {
       logger.e(e);
@@ -178,7 +175,6 @@ class AccountRepository extends BaseAccountRepository {
 
   // sign in with twitter
   Future<BaseAccount?> _handleTwitterAuth({required AccountType type}) async {
-    print('twitter');
     try {
       final authResult = await twitterLogin.login();
       if (authResult.status != null) {
@@ -187,7 +183,7 @@ class AccountRepository extends BaseAccountRepository {
             // success
             var user = authResult.user;
             if (user == null) {
-              print('user not found for twitter auth');
+              logger.i('user not found for twitter auth');
               return null;
             } else {
               var displayName = user.name;
@@ -195,15 +191,12 @@ class AccountRepository extends BaseAccountRepository {
               var avatar = user.thumbnailImage;
               var id = user.id.toString();
 
-              // create user account
-              var account = Account(userId: id, type: type);
-
-              // save user account details
-              localStorage.saveAccount = account;
-
-              // todo -> save user data to database
-
-              return account;
+              return _signInWithFirebaseAuth(
+                  TwitterAuthProvider.credential(
+                    accessToken: /*SystemConfig.getOrNull('twitter_api_key')!*/ 'zCeNFjWom3JgsKIuHFyhjoTrY',
+                    secret: /*SystemConfig.getOrNull('twitter_api_secret')!*/ 'Y3H9m9igrpztweA5BrjGRKTcbJS2vVXvUMy6N6KEMQvfbgu2eK',
+                  ),
+                  type);
             }
           case TwitterLoginStatus.cancelledByUser:
             // cancel
@@ -225,24 +218,63 @@ class AccountRepository extends BaseAccountRepository {
   Future<BaseAccount?> _handleAppleAuth({required AccountType type}) async {
     try {
       var credential = await SignInWithApple.getAppleIDCredential(
-            scopes: [
-              AppleIDAuthorizationScopes.email,
-              AppleIDAuthorizationScopes.fullName,
-            ],
-            webAuthenticationOptions: WebAuthenticationOptions(
-              clientId: 'clientId', // todo -> add apple client id
-              redirectUri: Uri(
-                host: 'shopper-ecommerce.firebaseapp.com',
-                path: '/__/auth/handler',
-                scheme: 'https',
-              ),
-            ),
-          );
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+        webAuthenticationOptions: WebAuthenticationOptions(
+          clientId: 'clientId', // todo -> add apple client id
+          redirectUri: Uri(
+            host: 'shopper-ecommerce.firebaseapp.com',
+            path: '/__/auth/handler',
+            scheme: 'https',
+          ),
+        ),
+      );
       logger.i(credential);
+      // TODO -> implement apple firebase auth
+      // return _signInWithFirebaseAuth(, type);
       return null;
     } catch (e) {
       logger.e(e);
       return null;
     }
+  }
+
+  // signs user in with firebase
+  Future<BaseAccount?> _signInWithFirebaseAuth(
+      AuthCredential credential, AccountType type) async {
+    // sign user in with credentials
+    var cred = await auth.signInWithCredential(credential);
+
+    if (cred.user != null) {
+      logger.i('logged in with firebase as -> [${cred.user?.uid}]');
+      // create user account
+      var account = Account(userId: cred.user!.uid, type: type);
+
+      // save user account details
+      localStorage.saveAccount = account;
+
+      // save user account type
+      localStorage.saveAccountType = type;
+
+      // todo -> save user data to database
+
+      return account;
+    }
+    return null;
+  }
+
+  @override
+  bool get isLoggedIn => localStorage.isLoggedIn;
+
+  @override
+  Future<void> logout() async {
+    // google sign out
+    if (googleSignIn.currentUser != null) await googleSignIn.signOut();
+    // facebook sign out
+    if ((await facebookLogin.accessToken)?.token != null)
+      await facebookLogin.logOut();
+    await auth.signOut();
   }
 }

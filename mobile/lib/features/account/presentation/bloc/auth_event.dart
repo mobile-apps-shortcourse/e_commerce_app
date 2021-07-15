@@ -7,32 +7,16 @@ abstract class AuthEvent {
 class LoginWithEmailAndPasswordEvent extends AuthEvent {
   final String email;
   final String password;
-  final AccountType accountType;
 
-  LoginWithEmailAndPasswordEvent(
-      {required this.email, required this.password, required this.accountType});
+  LoginWithEmailAndPasswordEvent({required this.email, required this.password});
 }
 
-class LoginWithGoogleEvent extends AuthEvent {
-  final AccountType accountType;
+class LoginWithGoogleEvent extends AuthEvent {}
 
-  LoginWithGoogleEvent(this.accountType);
-}
+class LoginWithFacebookEvent extends AuthEvent {}
 
-class LoginWithFacebookEvent extends AuthEvent {
-  final AccountType accountType;
+class LoginWithTwitterEvent extends AuthEvent {}
 
-  LoginWithFacebookEvent(this.accountType);
-}
+class LoginWithAppleEvent extends AuthEvent {}
 
-class LoginWithTwitterEvent extends AuthEvent {
-  final AccountType accountType;
-
-  LoginWithTwitterEvent(this.accountType);
-}
-
-class LoginWithAppleEvent extends AuthEvent {
-  final AccountType accountType;
-
-  LoginWithAppleEvent(this.accountType);
-}
+class LogoutEvent extends AuthEvent {}

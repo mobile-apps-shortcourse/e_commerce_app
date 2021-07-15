@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Shopper</string>
+    <!-- facebook authentication setup -->
+    <string name="facebook_app_id">925630904681953</string>
+    <string name="fb_login_protocol_scheme">fb925630904681953</string>
+</resources>

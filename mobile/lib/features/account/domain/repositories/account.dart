@@ -15,14 +15,15 @@ enum OAuthType { google, facebook, twitter, apple }
 
 /// defines all transactions on the [BaseAccount] entity
 abstract class BaseAccountRepository {
+  bool get isLoggedIn;
+
   Future<BaseAccount?> login({
     required String username,
     required String password,
   });
 
   Future<BaseAccount?> loginWithOAuth({
-    required OAuthType type,
-    required AccountType accountType,
+    required OAuthType type
   });
 
   Future<BaseAccount?> createAccount({
@@ -36,4 +37,6 @@ abstract class BaseAccountRepository {
   Future<bool> resetPassword({required String username});
 
   Future<bool> deleteAccount({required String id});
+
+  Future<void> logout();
 }

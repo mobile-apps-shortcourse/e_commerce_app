@@ -7,11 +7,12 @@
 import 'package:auto_route/auto_route.dart' as _i1;
 import 'package:flutter/material.dart' as _i2;
 
+import '../account/presentation/pages/account.picker.dart' as _i9;
 import '../account/presentation/pages/login.dart' as _i6;
 import '../account/presentation/pages/phone_number.verification.dart' as _i8;
 import '../account/presentation/pages/register.dart' as _i7;
 import '../onboarding/presentation/pages/welcome.dart' as _i3;
-import '../shopping/domain/entities/product.dart' as _i9;
+import '../shopping/domain/entities/product.dart' as _i10;
 import '../shopping/presentation/pages/home.dart' as _i4;
 import '../shopping/presentation/pages/product.dart' as _i5;
 
@@ -52,7 +53,12 @@ class AppRouter extends _i1.RootStackRouter {
             routeData: routeData,
             builder: (_) {
               return const _i8.PhoneNumberVerificationPage();
-            })
+            }),
+    UserAccountPickerRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+        routeData: routeData,
+        builder: (_) {
+          return const _i9.UserAccountPickerPage();
+        })
   };
 
   @override
@@ -63,7 +69,9 @@ class AppRouter extends _i1.RootStackRouter {
         _i1.RouteConfig(AuthenticationRoute.name, path: '/authentication-page'),
         _i1.RouteConfig(RegisterRoute.name, path: '/register-page'),
         _i1.RouteConfig(PhoneNumberVerificationRoute.name,
-            path: '/phone-number-verification-page')
+            path: '/phone-number-verification-page'),
+        _i1.RouteConfig(UserAccountPickerRoute.name,
+            path: '/user-account-picker-page')
       ];
 }
 
@@ -80,7 +88,7 @@ class HomeRoute extends _i1.PageRouteInfo {
 }
 
 class ProductRoute extends _i1.PageRouteInfo<ProductRouteArgs> {
-  ProductRoute({_i2.Key? key, required _i9.BaseProduct product})
+  ProductRoute({_i2.Key? key, required _i10.BaseProduct product})
       : super(name,
             path: '/product-page',
             args: ProductRouteArgs(key: key, product: product));
@@ -93,7 +101,7 @@ class ProductRouteArgs {
 
   final _i2.Key? key;
 
-  final _i9.BaseProduct product;
+  final _i10.BaseProduct product;
 }
 
 class AuthenticationRoute extends _i1.PageRouteInfo {
@@ -113,4 +121,11 @@ class PhoneNumberVerificationRoute extends _i1.PageRouteInfo {
       : super(name, path: '/phone-number-verification-page');
 
   static const String name = 'PhoneNumberVerificationRoute';
+}
+
+class UserAccountPickerRoute extends _i1.PageRouteInfo {
+  const UserAccountPickerRoute()
+      : super(name, path: '/user-account-picker-page');
+
+  static const String name = 'UserAccountPickerRoute';
 }

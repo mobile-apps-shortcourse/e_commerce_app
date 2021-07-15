@@ -7,11 +7,10 @@
 /// Modified By: Dennis Bilson <codelbas.quabynah@gmail.com>
 /// -----
 /// Copyright (c) 2021 Quabynah Codelabs LLC
-
 import 'dart:convert';
 
-import 'package:mobile/features/account/domain/entities/account.dart';
 import 'package:mobile/features/account/data/models/account/account.dart';
+import 'package:mobile/features/account/domain/entities/account.dart';
 import 'package:mobile/features/shared/domain/local.storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -19,6 +18,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// using [SharedPreferences]
 class LocalStorage extends BaseLocalStorage {
   static final _accountKey = "account.key";
+  static final _accountTypeKey = "account.type.key";
   static final _themeKey = "theme.key";
 
   final SharedPreferences prefs;
@@ -32,7 +32,7 @@ class LocalStorage extends BaseLocalStorage {
 
   @override
   set saveAccount(BaseAccount? account) {
-    prefs.setString(_accountKey, account == null ? "" : account.toString());
+    prefs.setString(_accountKey, account == null ? "" : jsonEncode(account));
   }
 
   @override
@@ -43,4 +43,14 @@ class LocalStorage extends BaseLocalStorage {
   @override
   BaseAccount? get userAccount =>
       Account.fromJson(jsonDecode(prefs.getString(_accountKey)!));
+
+  @override
+  AccountType? get accountType => prefs.getInt(_accountTypeKey) == null
+      ? null
+      : AccountType.values[prefs.getInt(_accountTypeKey)!];
+
+  @override
+  set saveAccountType(AccountType accountType) {
+    prefs.setInt(_accountTypeKey, accountType.index);
+  }
 }

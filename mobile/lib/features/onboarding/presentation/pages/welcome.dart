@@ -1,16 +1,14 @@
-/// File: welcome.dart
-/// Project: mobile
-/// Created Date: Thursday, June 10th 2021, 11:16:29 am
-/// Author: Dennis Bilson <codelbas.quabynah@gmail.com>
-/// -----
-/// Last Modified: Thursday, July 1st 2021 11:20:56 am
-/// Modified By: Dennis Bilson <codelbas.quabynah@gmail.com>
-
-import 'package:flutter/material.dart';
-import 'package:mobile/features/onboarding/presentation/widgets/page.indicator.dart';
-import 'package:mobile/shared/constants.dart';
-import 'package:mobile/features/routes/route.gr.dart';
+/// Filename: c:\Users\quaby\Documents\GitHub\e_commerce_app\mobile\lib\features\onboarding\presentation\pages\welcome.dart
+/// Path: c:\Users\quaby\Documents\GitHub\e_commerce_app\mobile
+/// Created Date: Thursday, July 8th 2021, 11:50:07 am
+/// Author: Short Course May-July, 2021
+///
+/// Copyright (c) 2021 University of Ghana
 import 'package:auto_route/auto_route.dart';
+import 'package:flutter/material.dart';
+import 'package:mobile/features/account/presentation/bloc/auth_bloc.dart';
+import 'package:mobile/features/onboarding/presentation/widgets/page.indicator.dart';
+import 'package:mobile/shared/shared.dart';
 
 /// initial route for all users
 class WelcomePage extends StatefulWidget {
@@ -24,16 +22,18 @@ class _WelcomePageState extends State<WelcomePage> {
   // configure page view
   int _currentPage = 0, _pages = 4;
 
+  final _authBloc = AuthBloc(repository: Injector.get());
+
+  @override
+  void dispose() {
+    _authBloc.close();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    // screen dimens props
-    var size = MediaQuery.of(context).size;
-    var kWidth = size.width;
-    var kHeight = size.height;
-
-    // theme props
-    var kTheme = Theme.of(context);
-    var kTextTheme = kTheme.textTheme;
+    // setup device configuration
+    DeviceConfig.init(context);
 
     return Scaffold(
       extendBody: true,
@@ -58,7 +58,7 @@ class _WelcomePageState extends State<WelcomePage> {
                       itemBuilder: (context, index) {
                         return Text(
                           'New collection\nSpring 2021',
-                          style: kTextTheme.headline4?.copyWith(
+                          style: DeviceConfig.kTextTheme.headline4?.copyWith(
                             color: Colors.black,
                           ),
                         );
@@ -99,7 +99,10 @@ class _WelcomePageState extends State<WelcomePage> {
                             // context.router.pushAndPopUntil(HomeRoute(), predicate: (route) => false);
 
                             // remove current route and navigate to new page
-                            context.router.popAndPush(AuthenticationRoute());
+                            context.router.popAndPush(UserAccountPickerRoute());
+                            // context.router.popAndPush(_authBloc.isLoggedIn
+                            //     ? HomeRoute()
+                            //     : UserAccountPickerRoute());
 
                             // navigate to the next route and back
                             // context.router.navigate(HomeRoute());
@@ -118,8 +121,8 @@ class _WelcomePageState extends State<WelcomePage> {
           Expanded(
             flex: 4,
             child: Container(
-              width: kWidth,
-              height: kHeight,
+              width: DeviceConfig.kDeviceWidth,
+              height: DeviceConfig.kDeviceHeight,
               decoration: BoxDecoration(
                 // color: kColorScheme.onBackground,
                 image: DecorationImage(

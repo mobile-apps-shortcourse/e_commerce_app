@@ -3,8 +3,8 @@
 /// Created Date: Thursday, June 17th 2021, 10:00:00 am
 /// Author: Dennis Bilson <codelbas.quabynah@gmail.com>
 /// -----
-/// Last Modified: Thursday, June 24th 2021 3:00:46 pm
-/// Modified By: Dennis Bilson <codelbas.quabynah@gmail.com>
+/// Last Modified: Th/07/yyyy 10:nn:58
+/// Modified By: Short Course May-July, 2021
 /// -----
 /// Copyright (c) 2021 Quabynah Codelabs LLC
 
@@ -13,8 +13,7 @@ import 'package:flutter/services.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:mobile/features/shared/presentation/widgets/button.dart';
 import 'package:mobile/features/shopping/presentation/widgets/product.card.dart';
-import 'package:mobile/shared/constants.dart';
-import 'package:mobile/shared/sample.dart';
+import 'package:mobile/shared/shared.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);

@@ -1,6 +1,6 @@
 # mobile
 
-An e-commerce platform
+A new Flutter project.
 
 ## Getting Started
 
