@@ -20,3 +20,10 @@ class LoginWithTwitterEvent extends AuthEvent {}
 class LoginWithAppleEvent extends AuthEvent {}
 
 class LogoutEvent extends AuthEvent {}
+
+class SaveAccountTypeEvent extends AuthEvent {
+  final AccountType accountType;
+
+  SaveAccountTypeEvent({required this.accountType});
+
+}

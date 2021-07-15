@@ -99,10 +99,9 @@ class _WelcomePageState extends State<WelcomePage> {
                             // context.router.pushAndPopUntil(HomeRoute(), predicate: (route) => false);
 
                             // remove current route and navigate to new page
-                            context.router.popAndPush(UserAccountPickerRoute());
-                            // context.router.popAndPush(_authBloc.isLoggedIn
-                            //     ? HomeRoute()
-                            //     : UserAccountPickerRoute());
+                            context.router.popAndPush(_authBloc.isLoggedIn
+                                ? HomeRoute()
+                                : UserAccountPickerRoute());
 
                             // navigate to the next route and back
                             // context.router.navigate(HomeRoute());

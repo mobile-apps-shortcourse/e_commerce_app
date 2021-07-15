@@ -14,6 +14,15 @@ class AuthBloc extends Bloc<AuthEvent, BlocState> {
 
   bool get isLoggedIn => repository.isLoggedIn;
 
+  bool get isCustomer =>
+      isLoggedIn && repository.accountType == AccountType.customer;
+
+  bool get isCourier =>
+      isLoggedIn && repository.accountType == AccountType.courier;
+
+  bool get isVendor =>
+      isLoggedIn && repository.accountType == AccountType.vendor;
+
   @override
   Stream<BlocState> mapEventToState(
     AuthEvent event,
@@ -73,6 +82,10 @@ class AuthBloc extends Bloc<AuthEvent, BlocState> {
       } else {
         yield BlocState<BaseAccount>.successState(data: account);
       }
+    } else if (event is SaveAccountTypeEvent) {
+      bool saved =
+          await repository.saveAccountType(accountType: event.accountType);
+      yield BlocState<bool>.successState(data: saved);
     }
   }
 }

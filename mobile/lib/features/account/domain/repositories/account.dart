@@ -17,6 +17,10 @@ enum OAuthType { google, facebook, twitter, apple }
 abstract class BaseAccountRepository {
   bool get isLoggedIn;
 
+  AccountType? get accountType;
+
+  Future<bool> saveAccountType({required AccountType accountType});
+
   Future<BaseAccount?> login({
     required String username,
     required String password,

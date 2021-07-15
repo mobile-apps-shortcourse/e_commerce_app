@@ -277,4 +277,13 @@ class AccountRepository extends BaseAccountRepository {
       await facebookLogin.logOut();
     await auth.signOut();
   }
+
+  @override
+  Future<bool> saveAccountType({required AccountType accountType}) async {
+    localStorage.saveAccountType = accountType;
+    return localStorage.accountType != null;
+  }
+
+  @override
+  AccountType? get accountType => localStorage.accountType;
 }

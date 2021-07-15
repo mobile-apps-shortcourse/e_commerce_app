@@ -7,45 +7,38 @@
 /// Modified By: Dennis Bilson <codelbas.quabynah@gmail.com>
 /// -----
 /// Copyright (c) 2021 Quabynah Codelabs LLC
-
 import 'package:flutter/material.dart';
+import 'package:mobile/shared/shared.dart';
 
 class RoundedCornerButton extends StatelessWidget {
   final String label;
   final Function() onTap;
   final IconData? icon;
+  final bool enabled;
 
   const RoundedCornerButton({
     Key? key,
     required this.label,
     required this.onTap,
     this.icon,
+    this.enabled = true,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    // theme
-    var kTheme = Theme.of(context);
-
-    // color scheme prop from the theme
-    var kColorScheme = kTheme.colorScheme;
-
-    // color scheme prop from the theme
-    var kTextTheme = kTheme.textTheme;
-
-    // size of display
-    var size = MediaQuery.of(context).size;
-
     return GestureDetector(
-      onTap: onTap,
-      child: Container(
+      onTap: enabled ? onTap : null,
+      child: AnimatedContainer(
+        duration: Duration(milliseconds: 150),
         padding: EdgeInsets.symmetric(
           horizontal: 24,
           vertical: 16,
         ),
-        width: size.width,
+        width: DeviceConfig.kDeviceWidth,
         decoration: BoxDecoration(
-          color: kColorScheme.onBackground,
+          color: enabled
+              ? DeviceConfig.kColorScheme.onBackground
+              : DeviceConfig.kColorScheme.surface,
           borderRadius: BorderRadius.circular(40),
         ),
         child: Row(
@@ -55,8 +48,10 @@ class RoundedCornerButton extends StatelessWidget {
             // button text
             Text(
               label,
-              style: kTextTheme.button?.copyWith(
-                color: kColorScheme.background,
+              style: DeviceConfig.kTextTheme.button?.copyWith(
+                color: enabled
+                    ? DeviceConfig.kColorScheme.background
+                    : DeviceConfig.kColorScheme.onSurface.withOpacity(0.38),
               ),
             ),
 
@@ -65,8 +60,10 @@ class RoundedCornerButton extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(left: 4),
                 child: Icon(
-                  Icons.chevron_right,
-                  color: kColorScheme.background,
+                  icon,
+                  color: enabled
+                      ? DeviceConfig.kColorScheme.background
+                      : DeviceConfig.kColorScheme.onSurface.withOpacity(0.38),
                 ),
               ),
             }
